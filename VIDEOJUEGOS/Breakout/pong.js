@@ -162,15 +162,15 @@ class Paddle extends GameObject {
 // Flashbang effect (screen flash when scoring)
 class Flashbang {
     constructor() {
-        this.alpha    = 0;
-        this.active   = false;
+        this.alpha = 0;
+        this.active = false;
         this.duration = 6000;
-        this.elapsed  = 0;
+        this.elapsed = 0;
     }
 
     trigger() {
-        this.alpha   = 0.5;
-        this.active  = true;
+        this.alpha = 0.5;
+        this.active = true;
         this.elapsed = 0;
     }
 
@@ -190,7 +190,7 @@ class Flashbang {
 
         ctx.save();
         ctx.globalAlpha = this.alpha;
-        ctx.fillStyle   = "white";
+        ctx.fillStyle = "white";
         ctx.fillRect(0, 0, canvasWidth, canvasHeight);
         ctx.restore();
     }
@@ -200,8 +200,8 @@ class Flashbang {
 // Main Game class (controls everything)
 class Game {
     constructor() {
-        this.points   = 0;
-        this.lives    = 3;
+        this.points = 0;
+        this.lives = 3;
         this.gameOver = false;
 
         this.lastFlashThreshold = 0;
@@ -237,9 +237,9 @@ class Game {
         );
 
         // walls
-        this.top_wall    = new GameObject(new Vector(canvasWidth / 2, 1), canvasWidth, 10, "gray");
-        this.left_wall   = new GameObject(new Vector(1, canvasHeight / 2), 10, canvasHeight, "gray");
-        this.right_wall  = new GameObject(new Vector(canvasWidth - 1, canvasHeight / 2), 10, canvasHeight, "gray");
+        this.top_wall = new GameObject(new Vector(canvasWidth / 2, 1), canvasWidth, 10, "gray");
+        this.left_wall = new GameObject(new Vector(1, canvasHeight / 2), 10, canvasHeight, "gray");
+        this.right_wall = new GameObject(new Vector(canvasWidth - 1, canvasHeight / 2), 10, canvasHeight, "gray");
         this.bottom_wall = new GameObject(new Vector(canvasWidth / 2, canvasHeight - 1), canvasWidth, 10, "gray");
 
         this.top_wall.updateCollider();
@@ -260,21 +260,20 @@ class Game {
         for (let row = 0; row < rows; row++) {
             for (let col = 0; col < cols; col++) {
                 const x = offsetLeft + col * (brickW + paddingX) + brickW / 2;
-                const y = offsetTop  + row * (brickH + paddingY) + brickH / 2;
+                const y = offsetTop + row * (brickH + paddingY) + brickH / 2;
 
                 this.bricks.push(new Brick(new Vector(x, y), brickW, brickH));
             }
         }
 
-        
         this.pointsText = new TextLabel(canvasWidth / 2, 50, "30px monospace", "white");
-        this.livesText  = new TextLabel(80, 50, "30px monospace", "white");
+        this.livesText = new TextLabel(80, 50, "30px monospace", "white");
     }
 
     addPoints(amount) {
         this.points += amount;
 
-        // trigger flash every n points this case 3 
+        // trigger flash every n points this case 3
         const threshold = Math.floor(this.points / 3) * 3;
 
         if (threshold > this.lastFlashThreshold && threshold > 0) {
@@ -321,5 +320,149 @@ class Game {
         ctx.font = "20px monospace";
         ctx.fillText("Press SPACE to play again", canvasWidth / 2, canvasHeight / 2 + 90);
     }
+
+    update(deltaTime) {
+        this.flash.update(deltaTime);
+
+        if (this.gameOver) return;
+
+        this.paddleBottom.update(deltaTime);
+        this.ball.update(deltaTime);
+
+        this.top_wall.updateCollider();
+        this.left_wall.updateCollider();
+        this.right_wall.updateCollider();
+        this.bottom_wall.updateCollider();
+
+        // collision with walls
+        if (boxOverlap(this.ball, this.top_wall)) this.ball.directionY = 1;
+        if (boxOverlap(this.ball, this.left_wall)) this.ball.directionX = 1;
+        if (boxOverlap(this.ball, this.right_wall)) this.ball.directionX = -1;
+
+        // collision with paddle
+        if (boxOverlap(this.ball, this.paddleBottom)) {
+            this.ball.directionY = -1;
+            ballSpeed *= 1.05;
+        }
+
+        // collision with bottom wall
+        if (boxOverlap(this.ball, this.bottom_wall)) {
+            this.lives -= 1;
+            this.ball.reset();
+
+            if (this.lives <= 0) {
+                this.gameOver = true;
+            }
+        }
+
+        // brick collisions
+        for (const brick of this.bricks) {
+            if (brick.active && boxOverlap(this.ball, brick)) {
+                brick.active = false;
+                this.addPoints(1);
+
+                const ballCX = this.ball.position.x;
+                const ballCY = this.ball.position.y;
+
+                const overlapLeft = ballCX - (brick.position.x - brick.halfSize.x);
+                const overlapRight = (brick.position.x + brick.halfSize.x) - ballCX;
+                const overlapTop = ballCY - (brick.position.y - brick.halfSize.y);
+                const overlapBottom = (brick.position.y + brick.halfSize.y) - ballCY;
+
+                const minOverlap = Math.min(
+                    overlapLeft,
+                    overlapRight,
+                    overlapTop,
+                    overlapBottom
+                );
+
+                if (minOverlap === overlapLeft || minOverlap === overlapRight) {
+                    this.ball.directionX *= -1;
+                } else {
+                    this.ball.directionY *= -1;
+                }
+
+                // all bricks destroyed, reset board
+                if (this.bricks.every(b => !b.active)) {
+                    this.ball.reset();
+                    this.initObjects();
+                }
+
+                break;
+            }
+        }
+    }
+
+    restart() {
+        this.points = 0;
+        this.lives = 3;
+        this.gameOver = false;
+        this.lastFlashThreshold = 0;
+        ballSpeed = 0.5;
+        this.flash = new Flashbang();
+        this.initObjects();
+    }
+
+    createEventListeners() {
+        window.addEventListener("keydown", (event) => {
+            if (event.key == "ArrowLeft" || event.key == "a") {
+                this.addKey_Bottom("left");
+            } else if (event.key == "ArrowRight" || event.key == "d") {
+                this.addKey_Bottom("right");
+            }
+
+            if (event.code == "Space") {
+                if (this.gameOver) {
+                    this.restart();
+                } else if (this.ball.velocity.x == 0 && this.ball.velocity.y == 0) {
+                    this.ball.serve();
+                }
+            }
+        });
+
+        window.addEventListener("keyup", (event) => {
+            if (event.key == "ArrowLeft" || event.key == "a") {
+                this.delKey_Bottom("left");
+            } else if (event.key == "ArrowRight" || event.key == "d") {
+                this.delKey_Bottom("right");
+            }
+        });
+    }
+
+    addKey_Bottom(direction) {
+        if (!this.paddleBottom.keys.includes(direction)) {
+            this.paddleBottom.keys.push(direction);
+        }
+    }
+
+    delKey_Bottom(direction) {
+        if (this.paddleBottom.keys.includes(direction)) {
+            this.paddleBottom.keys.splice(this.paddleBottom.keys.indexOf(direction), 1);
+        }
+    }
 }
 
+
+function main() {
+    const canvas = document.getElementById("canvas");
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+
+    ctx = canvas.getContext("2d");
+    game = new Game();
+
+    drawScene(0);
+}
+
+
+function drawScene(newTime) {
+    let deltaTime = newTime - oldTime;
+
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+    game.update(deltaTime);
+    game.draw(ctx);
+
+    oldTime = newTime;
+    requestAnimationFrame(drawScene);
+}
