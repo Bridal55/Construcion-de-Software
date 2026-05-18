@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lexer Output of C++ files </title>
+  <style>
+    body             { background: #1e1e1e; color: #d4d4d4; font-family: monospace;
+                       font-size: 14px; padding: 2rem; white-space: pre-wrap; }
+    .reserved        { color: #569cd6; font-weight: bold; }
+    .variable        { color: #9cdcfe; }
+    .integer         { color: #b5cea8; }
+    .float           { color: #b5cea8; }
+    .string          { color: #ce9178; }
+    .char            { color: #ce9178; }
+    .comment_single  { color: #6a9955; font-style: italic; }
+    .comment_multi   { color: #6a9955; font-style: italic; }
+    .op_arithmetic   { color: #d4d4d4; }
+    .op_assign       { color: #d4d4d4; }
+    .op_comparison   { color: #d4d4d4; }
+    .op_logical      { color: #d4d4d4; }
+    .punctuation     { color: #808080; }
+    .preprocessor    { color: #c586c0; }
+    .space           { }
+    .unknown         { color: #f44747; text-decoration: underline; }
+  </style>
+</head>
+<body><pre><span class="preprocessor">#include &lt;iostream&gt;</span><span class="space">
+</span><span class="reserved">class</span><span class="space"> </span><span class="variable">Counter</span><span class="space"> </span><span class="punctuation">{</span><span class="space">
+</span><span class="reserved">private</span><span class="punctuation">:</span><span class="space">
+    </span><span class="reserved">int</span><span class="space"> </span><span class="variable">value</span><span class="punctuation">;</span><span class="space">
+    </span><span class="reserved">int</span><span class="space"> </span><span class="variable">step</span><span class="punctuation">;</span><span class="space">
+
+</span><span class="reserved">public</span><span class="punctuation">:</span><span class="space">
+    </span><span class="variable">Counter</span><span class="punctuation">(</span><span class="reserved">int</span><span class="space"> </span><span class="variable">start</span><span class="punctuation">,</span><span class="space"> </span><span class="reserved">int</span><span class="space"> </span><span class="variable">step</span><span class="punctuation">)</span><span class="space"> </span><span class="punctuation">{</span><span class="space">
+        </span><span class="reserved">this</span><span class="op_arithmetic">-</span><span class="op_comparison">&gt;</span><span class="variable">value</span><span class="space"> </span><span class="op_assign">=</span><span class="space"> </span><span class="variable">start</span><span class="punctuation">;</span><span class="space">
+        </span><span class="reserved">this</span><span class="op_arithmetic">-</span><span class="op_comparison">&gt;</span><span class="variable">step</span><span class="space">  </span><span class="op_assign">=</span><span class="space"> </span><span class="variable">step</span><span class="punctuation">;</span><span class="space">
+    </span><span class="punctuation">}</span><span class="space">
+
+    </span><span class="reserved">void</span><span class="space"> </span><span class="variable">increment</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="space"> </span><span class="punctuation">{</span><span class="space"> </span><span class="variable">value</span><span class="space"> </span><span class="op_assign">+=</span><span class="space"> </span><span class="variable">step</span><span class="punctuation">;</span><span class="space"> </span><span class="punctuation">}</span><span class="space">
+    </span><span class="reserved">void</span><span class="space"> </span><span class="variable">decrement</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="space"> </span><span class="punctuation">{</span><span class="space"> </span><span class="variable">value</span><span class="space"> </span><span class="op_assign">-=</span><span class="space"> </span><span class="variable">step</span><span class="punctuation">;</span><span class="space"> </span><span class="punctuation">}</span><span class="space">
+    </span><span class="reserved">void</span><span class="space"> </span><span class="variable">reset</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="space">     </span><span class="punctuation">{</span><span class="space"> </span><span class="variable">value</span><span class="space"> </span><span class="op_assign">=</span><span class="space"> </span><span class="integer">0</span><span class="punctuation">;</span><span class="space"> </span><span class="punctuation">}</span><span class="space">
+
+    </span><span class="reserved">bool</span><span class="space"> </span><span class="variable">is_positive</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="space"> </span><span class="punctuation">{</span><span class="space"> </span><span class="reserved">return</span><span class="space"> </span><span class="variable">value</span><span class="space"> </span><span class="op_comparison">&gt;</span><span class="space"> </span><span class="integer">0</span><span class="punctuation">;</span><span class="space"> </span><span class="punctuation">}</span><span class="space">
+    </span><span class="reserved">bool</span><span class="space"> </span><span class="variable">is_zero</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="space">     </span><span class="punctuation">{</span><span class="space"> </span><span class="reserved">return</span><span class="space"> </span><span class="variable">value</span><span class="space"> </span><span class="op_comparison">==</span><span class="space"> </span><span class="integer">0</span><span class="punctuation">;</span><span class="space"> </span><span class="punctuation">}</span><span class="space">
+
+    </span><span class="reserved">int</span><span class="space"> </span><span class="variable">get</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="space"> </span><span class="punctuation">{</span><span class="space"> </span><span class="reserved">return</span><span class="space"> </span><span class="variable">value</span><span class="punctuation">;</span><span class="space"> </span><span class="punctuation">}</span><span class="space">
+</span><span class="punctuation">}</span><span class="punctuation">;</span><span class="space">
+
+</span><span class="reserved">int</span><span class="space"> </span><span class="variable">main</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="space"> </span><span class="punctuation">{</span><span class="space">
+    </span><span class="variable">Counter</span><span class="space"> </span><span class="variable">c</span><span class="punctuation">(</span><span class="integer">0</span><span class="punctuation">,</span><span class="space"> </span><span class="integer">5</span><span class="punctuation">)</span><span class="punctuation">;</span><span class="space">
+
+    </span><span class="variable">c</span><span class="punctuation">.</span><span class="variable">increment</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span><span class="space">
+    </span><span class="variable">c</span><span class="punctuation">.</span><span class="variable">increment</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span><span class="space">
+    </span><span class="variable">c</span><span class="punctuation">.</span><span class="variable">increment</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span><span class="space">
+
+    </span><span class="variable">std</span><span class="punctuation">:</span><span class="punctuation">:</span><span class="variable">cout</span><span class="space"> </span><span class="op_comparison">&lt;</span><span class="op_comparison">&lt;</span><span class="space"> </span><span class="string">"Value: "</span><span class="space"> </span><span class="op_comparison">&lt;</span><span class="op_comparison">&lt;</span><span class="space"> </span><span class="variable">c</span><span class="punctuation">.</span><span class="variable">get</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="space"> </span><span class="op_comparison">&lt;</span><span class="op_comparison">&lt;</span><span class="space"> </span><span class="variable">std</span><span class="punctuation">:</span><span class="punctuation">:</span><span class="variable">endl</span><span class="punctuation">;</span><span class="space">
+
+    </span><span class="reserved">if</span><span class="space"> </span><span class="punctuation">(</span><span class="variable">c</span><span class="punctuation">.</span><span class="variable">is_positive</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="space"> </span><span class="op_logical">&amp;&amp;</span><span class="space"> </span><span class="op_logical">!</span><span class="variable">c</span><span class="punctuation">.</span><span class="variable">is_zero</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="space"> </span><span class="punctuation">{</span><span class="space">
+        </span><span class="variable">std</span><span class="punctuation">:</span><span class="punctuation">:</span><span class="variable">cout</span><span class="space"> </span><span class="op_comparison">&lt;</span><span class="op_comparison">&lt;</span><span class="space"> </span><span class="string">"Counter is positive"</span><span class="space"> </span><span class="op_comparison">&lt;</span><span class="op_comparison">&lt;</span><span class="space"> </span><span class="variable">std</span><span class="punctuation">:</span><span class="punctuation">:</span><span class="variable">endl</span><span class="punctuation">;</span><span class="space">
+    </span><span class="punctuation">}</span><span class="space">
+
+    </span><span class="variable">c</span><span class="punctuation">.</span><span class="variable">reset</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span><span class="space">
+    </span><span class="variable">std</span><span class="punctuation">:</span><span class="punctuation">:</span><span class="variable">cout</span><span class="space"> </span><span class="op_comparison">&lt;</span><span class="op_comparison">&lt;</span><span class="space"> </span><span class="string">"After reset: "</span><span class="space"> </span><span class="op_comparison">&lt;</span><span class="op_comparison">&lt;</span><span class="space"> </span><span class="variable">c</span><span class="punctuation">.</span><span class="variable">get</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="space"> </span><span class="op_comparison">&lt;</span><span class="op_comparison">&lt;</span><span class="space"> </span><span class="variable">std</span><span class="punctuation">:</span><span class="punctuation">:</span><span class="variable">endl</span><span class="punctuation">;</span><span class="space">
+
+    </span><span class="reserved">return</span><span class="space"> </span><span class="integer">0</span><span class="punctuation">;</span><span class="space">
+</span><span class="punctuation">}</span></pre></body>
+</html>
